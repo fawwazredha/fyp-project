@@ -74,7 +74,12 @@ def signup():
 
     new_user = User(name=name, email=email, password=password, role='patient')
     db.session.add(new_user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": "Failed to create account", "detail": str(e)}), 500
+
     return jsonify({"status": "success", "message": "Account created", "user": new_user.to_dict()}), 201
 
 
@@ -105,14 +110,19 @@ def create_staff():
 
     new_user = User(name=name, email=email, password=password, role=role, specialty=specialty or None)
     db.session.add(new_user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": "Failed to create account", "detail": str(e)}), 500
+
     return jsonify({
         "status":  "success",
         "message": f"{role.capitalize()} account created",
         "user":    new_user.to_dict(),
     }), 201
-
-
+    
+    
 @main.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.order_by(User.created_at.desc()).all()
