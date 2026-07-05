@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKD Risk Assessment System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: 600; }
+        .timeline-dot { width: 12px; height: 12px; border-radius: 50%; position: absolute; left: -6px; top: 4px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-blue-600">MediCKD System</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="switchView('admin-view')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none">Admin</button>
+                    <button onclick="switchView('doctor-view')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none">Doctor</button>
+                    <button onclick="switchView('patient-view')" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none">Patient</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="admin-view" class="block">
+            <div class="mb-6 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-500">Total Users</h3>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">1,248</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-red-200 border-l-4 border-l-red-500">
+                    <h3 class="text-sm font-medium text-red-500">High-Risk & Urgent Cases</h3>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">42</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-500">Pending Appointments</h3>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">18</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-4 border-b border-gray-200 bg-gray-50 flex flex-wrap gap-4 items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-700">Patient Records & Coordination</h2>
+                    <div class="flex gap-2">
+                        <select class="border border-gray-300 rounded-md text-sm px-3 py-1.5 focus:ring-blue-500 focus:border-blue-500">
+                            <option>All Risk Levels</option>
+                            <option>High Risk</option>
+                            <option>Moderate</option>
+                            <option>Low</option>
+                        </select>
+                        <select class="border border-gray-300 rounded-md text-sm px-3 py-1.5 focus:ring-blue-500 focus:border-blue-500">
+                            <option>All Statuses</option>
+                            <option>Pending</option>
+                            <option>Scheduled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-600">
+                        <thead class="bg-gray-50 text-gray-700 uppercase">
+                            <tr>
+                                <th class="px-6 py-3 font-medium">Patient</th>
+                                <th class="px-6 py-3 font-medium">Risk Level</th>
+                                <th class="px-6 py-3 font-medium">Appt Status</th>
+                                <th class="px-6 py-3 font-medium text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Sarah Jenkins</div>
+                                    <div class="text-xs text-gray-500">ID: PT-8472</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        High Risk <span class="ml-1 font-bold text-red-600">⚠ URGENT</span>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Doctor Requested Appt</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="toggleRow('row-detail-1')" class="text-blue-600 hover:text-blue-900 font-medium">View Details</button>
+                                </td>
+                            </tr>
+                            <tr id="row-detail-1" class="hidden bg-gray-50 border-b border-gray-200">
+                                <td colspan="4" class="px-6 py-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">Patient Credentials</h4>
+                                            <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+                                            <p><strong>Email:</strong> s.jenkins@email.com</p>
+                                            <p><strong>DOB:</strong> 12/04/1965 (Age 61)</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-700 mb-2 border-b pb-1">CKD Questionnaire Highlights</h4>
+                                            <ul class="list-disc pl-4 text-sm text-gray-600">
+                                                <li>Blood Pressure: <span class="text-red-600 font-medium">160/95</span></li>
+                                                <li>Diabetes History: Yes</li>
+                                                <li>Swelling in legs: Yes</li>
+                                                <li>eGFR Estimate: &lt; 45 ml/min</li>
+                                            </ul>
+                                            <button class="mt-3 px-4 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 shadow-sm">Schedule Appointment Now</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Michael Chang</div>
+                                    <div class="text-xs text-gray-500">ID: PT-8473</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Moderate</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Pending User Info</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="toggleRow('row-detail-2')" class="text-blue-600 hover:text-blue-900 font-medium">View Details</button>
+                                </td>
+                            </tr>
+                             <tr id="row-detail-2" class="hidden bg-gray-50 border-b border-gray-200">
+                                <td colspan="4" class="px-6 py-4 text-gray-500 italic text-center">
+                                    Credentials pending patient profile completion.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="doctor-view" class="hidden">
+             <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">Doctor Workspace</h1>
+                <p class="text-gray-500 text-sm">Review assigned cases and coordinate with admin.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden lg:col-span-1">
+                    <div class="p-4 border-b border-gray-200 bg-gray-50">
+                        <h2 class="font-semibold text-gray-700">Assigned Patients</h2>
+                    </div>
+                    <ul class="divide-y divide-gray-200 max-h-[600px] overflow-y-auto">
+                        <li class="p-4 bg-blue-50 border-l-4 border-l-blue-500 cursor-pointer">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-bold text-gray-900">Sarah Jenkins</p>
+                                    <p class="text-xs text-gray-500">Submitted 2 hours ago</p>
+                                </div>
+                                <span class="bg-red-100 text-red-800 text-[10px] px-2 py-0.5 rounded-full font-bold">High Risk</span>
+                            </div>
+                        </li>
+                        <li class="p-4 hover:bg-gray-50 cursor-pointer transition-colors">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium text-gray-900">David Miller</p>
+                                    <p class="text-xs text-gray-500">Submitted 1 day ago</p>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Moderate</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 lg:col-span-2 flex flex-col">
+                    
+                    <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900">Sarah Jenkins <span class="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded shadow-sm align-middle uppercase tracking-wide">Urgent</span></h2>
+                            <p class="text-sm text-gray-500 mt-1">ID: PT-8472 | Age: 61</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md text-sm font-medium shadow-sm transition-colors">Request Admin Action</button>
+                            <button class="px-4 py-2 border border-transparent text-white bg-blue-600 hover:bg-blue-700 rounded-md text-sm font-medium shadow-sm transition-colors">Accept Appointment</button>
+                        </div>
+                    </div>
+
+                    <div class="border-b border-gray-200">
+                        <nav class="flex -mb-px px-6" aria-label="Tabs">
+                            <button onclick="switchTab('tab-results')" id="btn-tab-results" class="tab-active mr-8 py-4 px-1 text-sm font-medium focus:outline-none transition-colors">Prediction Results</button>
+                            <button onclick="switchTab('tab-answers')" id="btn-tab-answers" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 mr-8 py-4 px-1 border-b-2 text-sm font-medium focus:outline-none transition-colors">Questionnaire Answers</button>
+                            <button onclick="switchTab('tab-info')" id="btn-tab-info" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 border-b-2 text-sm font-medium focus:outline-none transition-colors">Patient Info</button>
+                        </nav>
+                    </div>
+
+                    <div class="p-6 flex-1 overflow-y-auto">
+                        <div id="tab-results" class="block">
+                            <div class="flex items-center p-4 mb-4 bg-red-50 rounded-lg border border-red-100">
+                                <div class="w-16 h-16 rounded-full bg-red-100 border-4 border-red-500 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-red-600 font-bold text-lg">87%</span>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-bold text-red-800">High Probability of CKD Stage 3+</h3>
+                                    <p class="text-sm text-red-600 mt-1">Algorithm confidence is high based on combined BP, age, and swelling indicators.</p>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex gap-3 border-t pt-6">
+                                <button class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 shadow-sm transition-colors">Flag as Serious / High Risk</button>
+                                <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded text-sm font-medium shadow-sm transition-colors">Add Clinical Note</button>
+                            </div>
+                        </div>
+
+                        <div id="tab-answers" class="hidden">
+                            <h3 class="font-semibold text-gray-800 mb-4">Raw Questionnaire Data</h3>
+                            <div class="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
+                                <div class="border-b border-gray-100 pb-2"><span class="block text-gray-500 text-xs">Blood Pressure</span><span class="font-medium text-gray-900">160/95</span></div>
+                                <div class="border-b border-gray-100 pb-2"><span class="block text-gray-500 text-xs">Diabetes</span><span class="font-medium text-gray-900">Type 2, Diagnosed 2018</span></div>
+                                <div class="border-b border-gray-100 pb-2"><span class="block text-gray-500 text-xs">Family History of CKD</span><span class="font-medium text-gray-900">Yes (Father)</span></div>
+                                <div class="border-b border-gray-100 pb-2"><span class="block text-gray-500 text-xs">Fatigue / Weakness</span><span class="font-medium text-gray-900">Frequent</span></div>
+                            </div>
+                        </div>
+
+                        <div id="tab-info" class="hidden">
+                            <h3 class="font-semibold text-gray-800 mb-4">Contact Credentials</h3>
+                            <div class="bg-gray-50 p-4 rounded-md border border-gray-200 text-sm">
+                                <p class="mb-2"><strong class="text-gray-700">Full Name:</strong> Sarah Jenkins</p>
+                                <p class="mb-2"><strong class="text-gray-700">Phone:</strong> +1 (555) 123-4567</p>
+                                <p class="mb-2"><strong class="text-gray-700">Email:</strong> s.jenkins@email.com</p>
+                                <p><strong class="text-gray-700">Address:</strong> 123 Medical Way, Health City, CA</p>
+                            </div>
+                            <p class="mt-4 text-xs text-gray-500">Credentials securely shared by Patient for appointment coordination.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="patient-view" class="hidden">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900">Patient Portal</h1>
+                <p class="text-gray-500 text-sm">Manage your profile and track your assessment journey.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <h2 class="font-semibold text-gray-700">Profile & Credentials</h2>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded font-medium">Logged In</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded text-sm text-blue-700">
+                                <strong>Important:</strong> Your information will be shared with the Admin and Doctor solely for appointment coordination and care management.
+                            </div>
+
+                            <form onsubmit="event.preventDefault(); alert('Credentials updated successfully!');">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                        <input type="text" value="Sarah" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                        <input type="text" value="Jenkins" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                        <input type="tel" value="+1 (555) 123-4567" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                        <input type="email" value="s.jenkins@email.com" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="p-4 border-b border-gray-200 bg-gray-50">
+                            <h2 class="font-semibold text-gray-700">Your Journey</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="relative border-l-2 border-gray-200 ml-3 space-y-8">
+                                
+                                <div class="relative pl-6">
+                                    <div class="timeline-dot bg-green-500 border-2 border-white shadow"></div>
+                                    <h3 class="text-sm font-bold text-gray-900">Submitted Answers</h3>
+                                    <p class="text-xs text-gray-500 mt-1">Completed on Oct 24, 2023</p>
+                                    <a href="#" class="text-xs text-blue-600 hover:underline mt-1 inline-block">View your answers</a>
+                                </div>
+
+                                <div class="relative pl-6">
+                                    <div class="timeline-dot bg-green-500 border-2 border-white shadow"></div>
+                                    <h3 class="text-sm font-bold text-gray-900">Prediction Result</h3>
+                                    <p class="text-xs text-gray-500 mt-1">System generated risk assessment.</p>
+                                    <div class="mt-2 inline-flex items-center px-2 py-1 rounded bg-red-50 border border-red-100 text-xs text-red-700 font-medium">
+                                        Status: High Risk
+                                    </div>
+                                </div>
+
+                                <div class="relative pl-6">
+                                    <div class="timeline-dot bg-yellow-400 border-2 border-white shadow animate-pulse"></div>
+                                    <h3 class="text-sm font-bold text-gray-900">Appointment Status</h3>
+                                    <p class="text-xs text-gray-500 mt-1">Admin is coordinating with your doctor based on your credentials.</p>
+                                    <p class="text-xs font-semibold text-yellow-600 mt-1 mt-2">Action: Pending Admin Booking</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Switch between main dashboard views
+        function switchView(viewId) {
+            document.getElementById('admin-view').classList.add('hidden');
+            document.getElementById('doctor-view').classList.add('hidden');
+            document.getElementById('patient-view').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        // Toggle Expandable Rows in Admin Table
+        function toggleRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row.classList.contains('hidden')) {
+                row.classList.remove('hidden');
+            } else {
+                row.classList.add('hidden');
+            }
+        }
+
+        // Switch Tabs in Doctor Detail Panel
+        function switchTab(tabId) {
+            // Hide all contents
+            document.getElementById('tab-results').classList.add('hidden');
+            document.getElementById('tab-answers').classList.add('hidden');
+            document.getElementById('tab-info').classList.add('hidden');
+            
+            // Reset button styles
+            const buttons = ['btn-tab-results', 'btn-tab-answers', 'btn-tab-info'];
+            buttons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                btn.classList.remove('tab-active', 'border-blue-500');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // Show selected content and update active button
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('tab-active', 'border-blue-500');
+            activeBtn.classList.remove('border-transparent', 'text-gray-500');
+        }
+    </script>
+</body>
+</html>
