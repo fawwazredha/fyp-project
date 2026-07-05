@@ -7,7 +7,7 @@ from app.routes import main
 app = Flask(__name__)
 CORS(app, origins=[
     "http://localhost:5173",
-    "https://gallant-youth-production-dc3b.up.railway.app"
+    "https:/ckdawarenessproject.up.railway.app"
 ], supports_credentials=True)
 # ── Load config ───────────────────────────────────────────────────────────────
 app.config.from_object(Config)
